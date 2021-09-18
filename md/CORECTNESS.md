@@ -1,8 +1,10 @@
 The given implementation of `insert(key)` and `contains(key)` is not linearizable.
 
-Consider two processes P and Q concurrently adding the same key `l` and a process W adding the key `r`, `r > l`. Prior to start of these processes the tree has such structure that If `insert(l)` and `insert(r)` were performed sequentially, `Node(l)` would become the right child of some node `n1` `Node(r)` would become the right child of `Node(l)`.
+Consider two processes P and Q concurrently adding the same key `l` and a process W adding the key `r`, `r > l`. Prior to start of these processes the tree has such structure that If `insert(l)` and `insert(r)` were performed sequentially, `Node(l)` would become the right child of some node `n1` and `Node(r)` would become the right child of `Node(l)`.
 
-P finds an insertion point and suspends before invocation of `n1.lock.lock()` until Q reaches the same point. P wakes, locks `n2`, assigns `n1.right = Node(l)` and releases the lock. Denote `Node(l)` created by P `n2`. Then wakes W, finds an insertion point for `r`, which is `n2.right`, locks `n2`, assigns `n2.right = Node(r)`, unlocks `n2` and completes the operation. Then wakes Q, locks `n1` and rewrites `n2` with a new node `n3`.
+P finds the insertion point and suspends before the invocation of `n1.lock.lock()` until Q reaches the same point. P wakes, locks `n2`, assigns `n1.right = Node(l)` and releases the lock. Denote `Node(l)` created by P `n2`. Then wakes W, finds an insertion point for `r`, which is `n2.right`, locks `n2`, assigns `n2.right = Node(r)`, unlocks `n2` and completes the operation. Then wakes Q, locks `n1` and rewrites `n2` with a new node `n3`.
+
+![Steps](https://github.com/raid-7/hse-concurrentTree/blob/master/img/code-steps.png?raw=true)
 
 ![Example](https://github.com/raid-7/hse-concurrentTree/blob/master/img/faulty.png?raw=true)
 
@@ -48,4 +50,3 @@ fun insert(node: Node, key: Int): Boolean {
   }
 }
 ```
-
